@@ -1,5 +1,7 @@
 # RevOps Dashboard (React)
 
+**Live demo:** https://revops-dashboard.netlify.app/
+
 A lightweight RevOps / CRM-style dashboard built with React + React Router.
 It showcases internal-tool patterns: list views, drill-down detail pages, KPI summaries, and local persistence.
 

@@ -1,0 +1,151 @@
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+
+  --text: #0f172a;
+  --muted: #64748b;
+
+  --border: #e5e7eb;
+
+  --brand: #1e3a8a;   /* blu profondo */
+  --brand2: #3b82f6;  /* blu più acceso */
+  --brandSoft: rgba(59, 130, 246, 0.12);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a { color: var(--brand2); }
+a:hover { color: var(--brand); }
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 22px;
+}
+
+.shell {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* Header */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  background: linear-gradient(135deg, var(--brand), #0b1b4d);
+  color: white;
+  padding: 16px 18px;
+}
+
+.brand {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.viewToggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.viewToggle .label {
+  opacity: 0.85;
+  font-size: 14px;
+}
+
+.btn {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.10);
+  color: white;
+
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.btnActive {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Content */
+.content {
+  padding: 18px;
+}
+
+.nav {
+  display: flex;
+  gap: 14px;
+  margin: 4px 0 16px;
+}
+
+.nav a {
+  text-decoration: none;
+  font-weight: 800;
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.nav a:hover {
+  background: var(--brandSoft);
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Tables */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.table th, .table td {
+  border-bottom: 1px solid var(--border);
+  padding: 10px 10px;
+  text-align: left;
+}
+
+.table tbody tr:hover {
+  background: var(--brandSoft);
+}
+
+/* KPI cards */
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.kpiCard {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  background: white;
+}
+
+.kpiCard .label { color: var(--muted); font-size: 12px; }
+.kpiCard .value { font-size: 20px; font-weight: 900; margin-top: 4px; }

@@ -1,21 +1,81 @@
 import { Link, useOutletContext, useParams } from "react-router-dom";
-import { reps } from "../data/reps";
-import { deals } from "../data/demoDeals";
+import { useEffect, useState } from "react";
+
 import { currentUser } from "../data/currentUser";
 import { getVisibleDeals } from "../utils/deals";
 import { computeSimpleKpis } from "../utils/dealsKpis";
+
+import { fetchRepById, fetchDeals } from "../app/api/revopsApi";
 
 export default function RepDetail() {
   const { viewMode } = useOutletContext();
   const { id } = useParams();
 
-  const rep = reps.find((r) => r.id === id);
+  const [rep, setRep] = useState(null);     // null = loading
+  const [deals, setDeals] = useState(null); // null = loading
+  const [apiStatus, setApiStatus] = useState("loading"); // loading | ok | error
+  const [apiError, setApiError] = useState("");
 
-  if (!rep) {
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      try {
+        setApiStatus("loading");
+        setApiError("");
+
+        const [apiRep, apiDeals] = await Promise.all([
+          fetchRepById(id),
+          fetchDeals(),
+        ]);
+
+        if (!cancelled) {
+          setRep(apiRep);
+          setDeals(apiDeals);
+          setApiStatus("ok");
+        }
+      } catch (err) {
+        console.error("RepDetail API error:", err);
+        if (!cancelled) {
+          setRep(null);
+          setDeals([]);
+          setApiStatus("error");
+          setApiError(err?.message || "Failed to load rep");
+        }
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  const isLoading = apiStatus === "loading" || rep === null || deals === null;
+
+  if (isLoading) {
+    return (
+      <div>
+        <div style={{ marginBottom: 12 }}>
+          <Link to="/reps" style={{ textDecoration: "none" }}>
+            ← Back to Reps
+          </Link>
+        </div>
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (apiStatus === "error") {
     return (
       <div>
         <h2>Rep Detail</h2>
-        <p>Rep not found.</p>
+        <p>API error while loading rep.</p>
+        {apiError && (
+          <p style={{ marginTop: 12, fontSize: 12, opacity: 0.8 }}>
+            {apiError}
+          </p>
+        )}
         <Link to="/reps" style={{ textDecoration: "none" }}>
           ← Back to Reps
         </Link>
@@ -23,8 +83,14 @@ export default function RepDetail() {
     );
   }
 
-  const visibleDeals = getVisibleDeals(deals, viewMode, currentUser.id);
-  const repDeals = visibleDeals.filter((d) => d.ownerId === rep.id);
+  // apiStatus === "ok" qui
+  const safeDeals = deals ?? [];
+  const visibleDeals = getVisibleDeals(safeDeals, viewMode, currentUser.id);
+
+  const repName = (rep.name || "").trim().toLowerCase();
+  const repDeals = visibleDeals.filter(
+    (d) => (d.owner || "").trim().toLowerCase() === repName
+  );
 
   const kpis = computeSimpleKpis(repDeals);
 
@@ -43,7 +109,10 @@ export default function RepDetail() {
         / <strong>{rep.name}</strong>
       </div>
 
-      <h2>Rep Detail</h2>
+      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+        <h2 style={{ margin: 0 }}>Rep Detail</h2>
+        <span style={{ fontSize: 12, opacity: 0.7 }}>API: {apiStatus}</span>
+      </div>
 
       <p>
         <strong>Name:</strong> {rep.name}
